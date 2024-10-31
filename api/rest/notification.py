@@ -1,5 +1,5 @@
 #api/rest/notification.py
-from restful import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas import *
 from service import *
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/notification", tags=["notification"])
 
 
 #创建请求
-@router.post("/create", response_model=Notification)
+@router.post("/create", response_model=NotificationResponse)
 def create_notification(notification: NotificationCreate, session: Session = Depends(get_db)):
     """
     创建请求
@@ -26,7 +26,7 @@ def create_notification(notification: NotificationCreate, session: Session = Dep
         raise HTTPException(status_code=400 if hasattr(e, 'message') else 500, detail=e.message if hasattr(e, 'message') else str(e))
     
 #通过identifier获取请求
-@router.get("/get", response_model=Notification)
+@router.get("/get", response_model=list[NotificationResponse])
 def get_notification(identifier: str,time:datetime=None, session: Session = Depends(get_db)):
     """
     通过identifier获取请求

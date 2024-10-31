@@ -19,7 +19,7 @@ class Account(BaseModel):
     
     # 唯一标识符，一般是一个合法的uuid，用于标识一个account，在区块链网络中这个字段是唯一的
     # 在数据库中不使用unique约束，在公钥更换的过程中identifier会和之前的相同
-    identifier = Column(String(36), index=True, nullable=False)
+    identifier = Column(String(36),primary_key=True, index=True, nullable=False)
     
     #昵称，可以是任意字符串，一般不建议超过128个字符，暂时约定UTF-8编码
     nickname = Column(String(128), nullable=False)

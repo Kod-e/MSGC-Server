@@ -19,10 +19,10 @@ class NotificationSync(NotificationCreate):
     update_at: str # 请求的更新时间
         
 # Notification返回
-class Notification(NotificationCreate):
+class NotificationResponse(NotificationCreate):
     create_time: str # 请求的创建时间
     update_time: str # 请求的更新时间
     
 # Notification列表返回
 class NotificationList(BaseModel):
-    data: list[Notification] # 请求列表
+    data: list[NotificationResponse] # 请求列表

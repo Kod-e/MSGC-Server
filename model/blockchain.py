@@ -12,7 +12,7 @@ class BlockChain(BaseModel):
     __tablename__ = 'blockchain'
     
     # 区块的时间戳，表示区块封装的时间,使用UTC+0时区 作为表的主键
-    timestamp = Column(DateTime, nullable=False)
+    timestamp = Column(DateTime,primary_key=True, nullable=False)
     
     # 区块的内容，存储过去10分钟内的Account的signature，每个signature之间安装ascii码排序
     content = Column(Text, nullable=False)

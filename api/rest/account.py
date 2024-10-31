@@ -1,6 +1,6 @@
 #api/rest/account.py
 
-from restful import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas import *
 from service import *
@@ -11,7 +11,7 @@ from storage import *
 router = APIRouter(prefix="/account", tags=["account"])
 
 #创建账号
-@router.post("/create", response_model=Account)
+@router.post("/create", response_model=AccountResponse)
 def create_account(account: AccountCreate, session: Session = Depends(get_db)):
     """
     创建账号
@@ -26,7 +26,7 @@ def create_account(account: AccountCreate, session: Session = Depends(get_db)):
         raise HTTPException(status_code=400 if hasattr(e, 'message') else 500, detail=e.message if hasattr(e, 'message') else str(e))
     
 #更新账号
-@router.put("/update", response_model=Account)
+@router.put("/update", response_model=AccountResponse)
 def update_account(account: AccountUpdate, session: Session = Depends(get_db)):
     """
     更新账号
@@ -41,7 +41,7 @@ def update_account(account: AccountUpdate, session: Session = Depends(get_db)):
         raise HTTPException(status_code=400 if hasattr(e, 'message') else 500, detail=e.message if hasattr(e, 'message') else str(e))
 
 #通过identifier获取账号
-@router.get("/get", response_model=Account)
+@router.get("/get", response_model=AccountResponse)
 def get_account(identifier: str, session: Session = Depends(get_db)):
     """
     通过identifier获取账号
@@ -56,7 +56,7 @@ def get_account(identifier: str, session: Session = Depends(get_db)):
         raise HTTPException(status_code=400 if hasattr(e, 'message') else 500, detail=e.message if hasattr(e, 'message') else str(e))
     
 #通过nickname获取账号
-@router.get("/get_by_nickname", response_model=Account)
+@router.get("/get_by_nickname", response_model=list[AccountResponse])
 def get_account_by_nickname(nickname: str, session: Session = Depends(get_db)):
     """
     通过nickname获取账号

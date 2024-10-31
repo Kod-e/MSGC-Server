@@ -26,10 +26,10 @@ class AccountSync(AccountCreate):
     update_at: str # 账号的更新时间
     
 # 账号返回
-class Account(AccountCreate):
+class AccountResponse(AccountCreate):
     create_time: str # 账号的创建时间
     update_time: str # 账号的更新时间
     
 # 账号列表返回
 class AccountList(BaseModel):
-    data: list[Account] # 账号列表
+    data: list[AccountResponse] # 账号列表

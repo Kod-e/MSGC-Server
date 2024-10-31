@@ -1,2 +1,2 @@
-from account import *
-from notification import *
+from .account import *
+from .notification import *
