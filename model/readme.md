@@ -34,16 +34,16 @@
 
 定义在 [node.py](node.py) 中。
 
-### Request 模型
-`Request` 模型用于存储请求信息。主要字段包括：
+### UserRequest 模型
+`UserRequest` 模型用于存储请求信息。主要字段包括：
 - `identifier`: 唯一标识符，一般是一个合法的 UUID。
 - `account_identifier`: 请求指向的账户标识符。
 - `content`: 请求的内容。
 
-定义在 [request.py](request.py) 中。
+定义在 [user_request.py](user_request.py) 中。
 
-### Block 模型
-`Block` 模型用于存储区块信息。主要字段包括：
+### BlockChain 模型
+`BlockChain` 模型用于存储区块信息。主要字段包括：
 - `identifier`: 唯一标识符，一般是一个合法的 UUID。
 - `timestamp`: 区块的时间戳，表示区块封装的时间。
 - `content`: 区块的内容，存储过去10分钟内的信息。
@@ -51,4 +51,4 @@
 - `current_hash`: 当前区块的哈希值，用于验证区块的完整性。
 - `status`: 区块的状态，表示是否已被广播并确认。
 
-定义在 [block.py](block.py) 中。
+定义在 [blockchain.py](blockchain.py) 中。

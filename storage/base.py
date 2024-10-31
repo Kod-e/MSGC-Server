@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-
+from contextlib import contextmanager
 
 #需要支持的特性会写在readme里
 DATABASE_URL = "sqlite:///./test.db"
@@ -19,3 +19,17 @@ def get_db():
         yield db
     finally:
         db.remove()
+        
+
+@contextmanager
+def session_scope():
+    """提供一个事务范围，确保会话的提交或回滚"""
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

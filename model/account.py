@@ -1,7 +1,13 @@
+#model/account.py
+
 from .basemodel import BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey,Text
 from sqlalchemy.orm import relationship
 import uuid
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
+from cryptography.exceptions import InvalidSignature
 
 
 class Account(BaseModel):
@@ -25,15 +31,63 @@ class Account(BaseModel):
     # 建议客户端请求消息时向前获取一段时间的消息，以防止消息丢失
     change_chat_id_time = Column(String(2), nullable=True)
     
-    # 公钥
-    public_key = Column(Text, nullable=False)
+    # 公钥，暂时约定为ECDSA，使用P-256曲线，使用PEM格式存储
+    public_key = Column(String(88), nullable=False)
+    
+    # 上一次的公钥，暂时约定为ECDSA，使用P-256曲线, 使用PEM格式存储
+    previous_public_key = Column(String(88), nullable=True)
     
     #这个account使用的消息内容服务器的地址
-    message_server = Column(String, nullable=False)
+    message_server = Column(String(256), nullable=False)
     
     # 签名，用于验证这个account的合法性，使用上一次的公钥进行签名
     # 如果是第一次添加，在这个顺序中忽略公钥并且使用刚刚生成的公钥进行签名
     # 如果某个字段不存在就不参与签名
-    # 格式为 identifier + nickname + public_key + change_chat_id_time + message_server
+    # 参与签名的字段为identifier,nickname,chang_chat_id_time,message_server 如果previous_public_key存在，public_key参与签名
+    # 签名的数据按照ascii码排序
+    # 验证算法为ECDSA，使用SHA256哈希算法
     signature = Column(Text, nullable=True)
     
+    # 签名校验函数
+    def verify_signature(self) -> bool:
+        """
+        校验账户的签名
+        :return: 返回校验结果
+        """
+        data: dict
+        # 检测previous_public_key是否存在
+        if self.previous_public_key is None:
+            data = {
+                'identifier': self.identifier,
+                'nickname': self.nickname,
+                'change_chat_id_time': self.change_chat_id_time,
+                'message_server': self.message_server,
+            }
+        else:
+            data = {
+                'identifier': self.identifier,
+                'nickname': self.nickname,
+                'change_chat_id_time': self.change_chat_id_time,
+                'message_server': self.message_server,
+                'public_key': self.public_key
+            }
+            
+        # 按照ascii码排序
+        data = dict(sorted(data.items(), key=lambda x: x[0]))
+        
+        # 将数据转换为字符串并编码
+        data_str = ''.join(f'{key}:{value}' for key, value in data.items()).encode('utf-8')
+        
+        try:
+            # 加载公钥
+            public_key = load_pem_public_key(self.previous_public_key.encode('utf-8') if self.previous_public_key else self.public_key.encode('utf-8'))
+            
+            # 验证签名
+            public_key.verify(
+                bytes.fromhex(self.signature),
+                data_str,
+                ec.ECDSA(hashes.SHA256())
+            )
+            return True
+        except InvalidSignature:
+            return False

@@ -1,9 +1,12 @@
+#model/basemodel.py
+
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Boolean, func
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime, timezone
 
-Base = declarative_base()
+from storage.base import Base
+
 
 class BaseModel(Base):
     __abstract__ = True

@@ -1,13 +1,15 @@
+#model/blockchain.py
+
 from sqlalchemy import Column, String, DateTime, Integer, Text
 from sqlalchemy.orm import relationship
 from .basemodel import BaseModel
 import uuid
 
-class Block(BaseModel):
+class BlockChain(BaseModel):
     """
-    Block表用于存储区块信息
+    BlockChain表用于存储区块信息
     """
-    __tablename__ = 'block'
+    __tablename__ = 'blockchain'
     
     # 区块的时间戳，表示区块封装的时间,使用UTC+0时区 作为表的主键
     timestamp = Column(DateTime, nullable=False)
