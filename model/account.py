@@ -31,6 +31,9 @@ class Account(BaseModel):
     # 建议客户端请求消息时向前获取一段时间的消息，以防止消息丢失
     change_chat_id_time = Column(String(2), nullable=True)
     
+    # 账号的头像，暂定为一个url
+    avatar = Column(String(256), nullable=True)
+    
     # 公钥，暂时约定为ECDSA，使用P-256曲线，使用PEM格式存储
     public_key = Column(String(88), nullable=False)
     
@@ -43,7 +46,7 @@ class Account(BaseModel):
     # 签名，用于验证这个account的合法性，使用上一次的公钥进行签名
     # 如果是第一次添加，在这个顺序中忽略公钥并且使用刚刚生成的公钥进行签名
     # 如果某个字段不存在就不参与签名
-    # 参与签名的字段为identifier,nickname,chang_chat_id_time,message_server 如果previous_public_key存在，public_key参与签名
+    # 参与签名的字段为identifier,nickname,avatar,chang_chat_id_time,message_server 如果previous_public_key存在，public_key参与签名
     # 签名的数据按照ascii码排序
     # 验证算法为ECDSA，使用SHA256哈希算法
     signature = Column(Text, nullable=True)
@@ -54,23 +57,18 @@ class Account(BaseModel):
         校验账户的签名
         :return: 返回校验结果
         """
-        data: dict
+        data =  {
+            'identifier': self.identifier,
+            'nickname': self.nickname,
+            'change_chat_id_time': self.change_chat_id_time,
+            'message_server': self.message_server,
+        }
         # 检测previous_public_key是否存在
-        if self.previous_public_key is None:
-            data = {
-                'identifier': self.identifier,
-                'nickname': self.nickname,
-                'change_chat_id_time': self.change_chat_id_time,
-                'message_server': self.message_server,
-            }
-        else:
-            data = {
-                'identifier': self.identifier,
-                'nickname': self.nickname,
-                'change_chat_id_time': self.change_chat_id_time,
-                'message_server': self.message_server,
-                'public_key': self.public_key
-            }
+        if self.previous_public_key:
+            data['public_key'] = self.public_key
+        # 检测avatar是否存在
+        if self.avatar:
+            data['avatar'] = self.avatar
             
         # 按照ascii码排序
         data = dict(sorted(data.items(), key=lambda x: x[0]))

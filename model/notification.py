@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 import uuid
 
 
-class UserRequest(BaseModel):
+class Notification(BaseModel):
     """
     Request表用于存储请求信息
     在区块链网络中，这个表的数据会被复制到每个节点上
