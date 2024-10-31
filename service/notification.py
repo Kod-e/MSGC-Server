@@ -3,6 +3,7 @@ from storage import *
 from exceptions import *
 from sqlalchemy.orm import Session
 import uuid
+from datetime import datetime
 
 class NotificationService():
     
@@ -27,3 +28,17 @@ class NotificationService():
         session.commit()
         
         return new_notification
+    
+    # 查询某个identifier在某个time之后的所有请求
+    @staticmethod
+    def get_notifications_after_time(account_identifier:str, session:Session,time:datetime=None) -> list[Notification]:
+        """
+        查询某个identifier在某个time之后的所有请求
+        :param account_identifier: 请求的账户的唯一标识符
+        :param time: 请求的时间
+        :return: 返回请求列表
+        """
+        if time is None:
+            return session.query(Notification).filter(Notification.account_identifier == account_identifier).all()
+        else:
+            return session.query(Notification).filter(Notification.account_identifier == account_identifier).filter(Notification.created_at > time).all()

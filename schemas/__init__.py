@@ -1,2 +1,2 @@
 from account import *
-from schemas import *
+from notification import *

@@ -19,7 +19,12 @@ class AccountCreate(BaseModel):
 # 账号更新请求
 class AccountUpdate(AccountCreate):
     previous_public_key: Optional[str] # 账号的上一次公钥
-
+    
+# 账号同步请求（用于区块链同步）
+class AccountSync(AccountCreate):
+    create_at: str # 账号的创建时间
+    update_at: str # 账号的更新时间
+    
 # 账号返回
 class Account(AccountCreate):
     create_time: str # 账号的创建时间
@@ -28,7 +33,3 @@ class Account(AccountCreate):
 # 账号列表返回
 class AccountList(BaseModel):
     data: list[Account] # 账号列表
-    total: int # 账号总数
-    total_page: int # 总页数
-    page: int # 当前页码
-    page_size: int # 每页数量

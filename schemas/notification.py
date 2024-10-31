@@ -13,15 +13,16 @@ class NotificationCreate(BaseModel):
     class Config:
         orm_mode = True
         
+# Notification同步请求（用于区块链同步）
+class NotificationSync(NotificationCreate):
+    create_at: str # 请求的创建时间
+    update_at: str # 请求的更新时间
+        
 # Notification返回
 class Notification(NotificationCreate):
     create_time: str # 请求的创建时间
     update_time: str # 请求的更新时间
-
+    
 # Notification列表返回
 class NotificationList(BaseModel):
     data: list[Notification] # 请求列表
-    total: int # 请求总数
-    total_page: int # 总页数
-    page: int # 当前页码
-    page_size: int # 每页数量

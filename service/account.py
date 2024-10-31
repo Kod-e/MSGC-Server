@@ -70,3 +70,27 @@ class AccountService():
             raise AccountSignatureVerifyException()
         
         return new_account
+    
+    # 通过nickname获取一组相似的账户
+    @staticmethod
+    def get_accounts_by_nickname(nickname:str, session:Session) -> list[Account]:
+        """
+        通过nickname获取一组相似的账户
+        :param nickname: 账户的昵称
+        :return: 返回账户列表
+        """
+        accounts = session.query(Account).filter(Account.nickname.like(f'%{nickname}%')).all()
+        return accounts
+    
+    # 通过identifier获取账户
+    @staticmethod
+    def get_account_by_identifier(identifier:str, session:Session) -> Account:
+        """
+        通过identifier获取账户
+        :param identifier: 账户的唯一标识符
+        :return: 返回账户
+        """
+        account = session.query(Account).filter(Account.identifier == identifier).first()
+        if account is None:
+            raise AccountNotExistException()
+        return account
